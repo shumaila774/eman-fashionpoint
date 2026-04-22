@@ -1,13 +1,15 @@
+import "./App.css";
 import { useMemo, useState } from "react";
 
 export default function App() {
   const products = [
     {
       id: 1,
-      name: "Women’s Dress",
+      name: "Women's Dress",
       category: "Fashion",
       price: 49,
-      image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop",
       badge: "Best Seller",
     },
     {
@@ -15,7 +17,8 @@ export default function App() {
       name: "Handbag",
       category: "Accessories",
       price: 35,
-      image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1200&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1200&auto=format&fit=crop",
       badge: "New",
     },
     {
@@ -23,7 +26,8 @@ export default function App() {
       name: "Ladies Sandals",
       category: "Footwear",
       price: 28,
-      image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1200&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1200&auto=format&fit=crop",
       badge: "Popular",
     },
     {
@@ -31,183 +35,205 @@ export default function App() {
       name: "Summer Scarf",
       category: "Accessories",
       price: 18,
-      image: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?q=80&w=1200&auto=format&fit=crop",
+      image:
+        "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?q=80&w=1200&auto=format&fit=crop",
       badge: "Sale",
     },
     {
       id: 5,
-      name: "Men’s Shirt",
-      category: "Fashion",
-      price: 32,
-      image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=80&w=1200&auto=format&fit=crop",
-      badge: "Hot",
+      name: "Classic Heels",
+      category: "Footwear",
+      price: 42,
+      image:
+        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop",
+      badge: "Trending",
     },
     {
       id: 6,
-      name: "Wallet",
+      name: "Elegant Watch",
       category: "Accessories",
-      price: 22,
-      image: "https://images.unsplash.com/photo-1627123424574-724758594e93?q=80&w=1200&auto=format&fit=crop",
-      badge: "Value",
+      price: 55,
+      image:
+        "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=1200&auto=format&fit=crop",
+      badge: "Luxury",
     },
   ];
 
-  const categories = ["All", ...new Set(products.map((p) => p.category))];
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
   const [cart, setCart] = useState([]);
 
-  const filtered = useMemo(() => {
-    return products.filter((p) => {
-      const matchesCategory = category === "All" || p.category === category;
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [search, category]);
-
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
   const addToCart = (product) => {
-    setCart((prev) => {
-      const found = prev.find((item) => item.id === product.id);
-      if (found) {
-        return prev.map((item) =>
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+
+      return [...prevCart, { ...product, quantity: 1 }];
     });
   };
 
-  const updateQty = (id, delta) => {
-    setCart((prev) =>
-      prev
+  const updateQty = (id, change) => {
+    setCart((prevCart) =>
+      prevCart
         .map((item) =>
-          item.id === id ? { ...item, quantity: Math.max(0, item.quantity + delta) } : item
+          item.id === id
+            ? { ...item, quantity: item.quantity + change }
+            : item
         )
         .filter((item) => item.quantity > 0)
     );
   };
 
+  const cartTotal = useMemo(() => {
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  }, [cart]);
+
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", color: "#111827", fontFamily: "Arial, sans-serif" }}>
-      <header style={{ borderBottom: "1px solid #e5e7eb", background: "#fff", padding: "20px 30px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", maxWidth: "1200px", margin: "0 auto" }}>
-          <div>
-            <h1 style={{ margin: 0, fontSize: "32px" }}>Eman Fashionpoint</h1>
-            <p style={{ margin: "6px 0 0", color: "#6b7280" }}>Online fashion shopping website</p>
-          </div>
-          <div style={{ background: "#f3f4f6", padding: "12px 16px", borderRadius: "16px", fontWeight: "bold" }}>
-            Cart: {cartCount} item{cartCount === 1 ? "" : "s"} · ${cartTotal}
-          </div>
-        </div>
+    <div className="app">
+      <div className="top-bar">
+        Free delivery on orders over $50 | New arrivals every week
+      </div>
+
+      <header className="navbar">
+        <h2 className="logo">Eman Fashionpoint</h2>
+        <nav className="nav-links">
+          <a href="#home">Home</a>
+          <a href="#shop">Shop</a>
+          <a href="#sale">Sale</a>
+          <a href="#contact">Contact</a>
+        </nav>
       </header>
 
-      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "30px" }}>
-        <div style={{ background: "#fff", borderRadius: "24px", padding: "24px", marginBottom: "30px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-          <p style={{ color: "#6b7280", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "8px" }}>Welcome</p>
-          <h2 style={{ fontSize: "40px", margin: "0 0 12px" }}>Shop stylish fashion in one place</h2>
-          <p style={{ color: "#4b5563", maxWidth: "700px" }}>
-            Browse categories, search products, and add items to your cart. This is a starter ecommerce website for Eman Fashionpoint.
+      <section className="hero" id="home">
+        <div className="hero-text">
+          <p className="hero-tag">New Collection</p>
+          <h1>Style That Speaks for You</h1>
+          <p>
+            Discover trendy and elegant fashion designed to make every moment
+            beautiful.
           </p>
-
-          <div style={{ display: "flex", gap: "12px", marginTop: "20px", flexWrap: "wrap" }}>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
-              style={{ padding: "12px 16px", borderRadius: "14px", border: "1px solid #d1d5db", minWidth: "260px" }}
-            />
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              style={{ padding: "12px 16px", borderRadius: "14px", border: "1px solid #d1d5db", minWidth: "220px" }}
-            >
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+          <div className="hero-buttons">
+            <button>Shop Now</button>
+            <button className="secondary-btn">View Collection</button>
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "30px" }}>
-          <div>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, fontSize: "28px" }}>Products</h3>
-              <p style={{ color: "#6b7280" }}>{filtered.length} items found</p>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
-              {filtered.map((product) => (
-                <div key={product.id} style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "24px", overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-                  <img src={product.image} alt={product.name} style={{ width: "100%", height: "220px", objectFit: "cover" }} />
-                  <div style={{ padding: "18px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-                      <span style={{ background: "#f3f4f6", padding: "6px 10px", borderRadius: "999px", fontSize: "12px", fontWeight: "bold" }}>{product.badge}</span>
-                      <span style={{ fontSize: "12px", color: "#6b7280" }}>{product.category}</span>
-                    </div>
-                    <h4 style={{ margin: "0 0 12px", fontSize: "22px" }}>{product.name}</h4>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "24px", fontWeight: "bold" }}>${product.price}</span>
-                      <button
-                        onClick={() => addToCart(product)}
-                        style={{ background: "#111827", color: "#fff", border: "none", borderRadius: "14px", padding: "10px 14px", cursor: "pointer" }}
-                      >
-                        Add to cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <aside style={{ background: "#fff", border: "1px solid #e5e7eb", borderRadius: "24px", padding: "20px", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px" }}>
-              <h3 style={{ margin: 0, fontSize: "26px" }}>Your Cart</h3>
-              <span style={{ color: "#6b7280" }}>{cartCount} items</span>
-            </div>
-
-            {cart.length === 0 ? (
-              <p style={{ background: "#f9fafb", padding: "14px", borderRadius: "14px", color: "#6b7280" }}>
-                Your cart is empty. Add products to see them here.
-              </p>
-            ) : (
-              <div>
-                {cart.map((item) => (
-                  <div key={item.id} style={{ border: "1px solid #e5e7eb", borderRadius: "16px", padding: "14px", marginBottom: "14px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <div>
-                        <p style={{ margin: 0, fontWeight: "bold" }}>{item.name}</p>
-                        <p style={{ margin: "4px 0 0", color: "#6b7280" }}>${item.price} each</p>
-                      </div>
-                      <p style={{ margin: 0, fontWeight: "bold" }}>${item.price * item.quantity}</p>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px", alignItems: "center", marginTop: "12px" }}>
-                      <button onClick={() => updateQty(item.id, -1)} style={{ padding: "6px 12px", borderRadius: "10px", border: "1px solid #d1d5db", cursor: "pointer" }}>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => updateQty(item.id, 1)} style={{ padding: "6px 12px", borderRadius: "10px", border: "1px solid #d1d5db", cursor: "pointer" }}>+</button>
-                    </div>
-                  </div>
-                ))}
-
-                <div style={{ borderTop: "1px solid #e5e7eb", paddingTop: "14px", marginTop: "16px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "22px", fontWeight: "bold", marginBottom: "14px" }}>
-                    <span>Total</span>
-                    <span>${cartTotal}</span>
-                  </div>
-                  <button style={{ width: "100%", background: "#111827", color: "#fff", border: "none", padding: "14px", borderRadius: "16px", cursor: "pointer" }}>
-                    Checkout
-                  </button>
-                </div>
-              </div>
-            )}
-          </aside>
+        <div className="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop"
+            alt="Fashion hero"
+          />
         </div>
       </section>
+
+      <section className="sale-section" id="sale">
+        <p>Special Offer</p>
+        <h2>Up to 40% Off This Week</h2>
+        <span>
+          Refresh your wardrobe with stylish fashion at amazing prices.
+        </span>
+        <button>Shop Sale</button>
+      </section>
+
+      <section className="products-section" id="shop">
+        <div className="section-heading">
+          <h2>Featured Products</h2>
+          <p>Explore our handpicked styles</p>
+        </div>
+
+        <div className="product-grid">
+          {products.map((item) => (
+            <div className="product-card" key={item.id}>
+              <div className="product-image-box">
+                <img src={item.image} alt={item.name} />
+                <span className="badge">{item.badge}</span>
+              </div>
+
+              <div className="product-info">
+                <p className="category">{item.category}</p>
+                <h3>{item.name}</h3>
+                <p className="price">${item.price}</p>
+
+                <div className="product-actions">
+                  <button onClick={() => addToCart(item)}>Add to Cart</button>
+                  <a
+                    href={`https://wa.me/1234567890?text=Hi, I want to order ${item.name}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="whatsapp-link"
+                  >
+                    WhatsApp Order
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="cart-section">
+        <h2>Your Cart</h2>
+
+        {cart.length === 0 ? (
+          <p className="empty-cart">Your cart is empty.</p>
+        ) : (
+          <div className="cart-list">
+            {cart.map((item) => (
+              <div className="cart-item" key={item.id}>
+                <img src={item.image} alt={item.name} />
+
+                <div className="cart-details">
+                  <h4>{item.name}</h4>
+                  <p>${item.price} each</p>
+                  <p>
+                    <strong>Total: ${item.price * item.quantity}</strong>
+                  </p>
+
+                  <div className="qty-buttons">
+                    <button onClick={() => updateQty(item.id, -1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQty(item.id, 1)}>+</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            <div className="cart-summary">
+              <h3>Grand Total: ${cartTotal}</h3>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="why-us">
+        <h2>Why Choose Us</h2>
+        <div className="why-grid">
+          <div className="why-card">Premium Quality</div>
+          <div className="why-card">Fast Delivery</div>
+          <div className="why-card">Easy Ordering</div>
+          <div className="why-card">Customer Support</div>
+        </div>
+      </section>
+
+      <footer className="footer" id="contact">
+        <h3>Eman Fashionpoint</h3>
+        <p>Trendy fashion for every occasion.</p>
+        <p>Contact us for stylish collections and easy ordering.</p>
+      </footer>
+
+      <a
+        href="https://wa.me/1234567890?text=Hi, I want to know more about your products"
+        className="floating-whatsapp"
+        target="_blank"
+        rel="noreferrer"
+      >
+        WhatsApp
+      </a>
     </div>
   );
 }
